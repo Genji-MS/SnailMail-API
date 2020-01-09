@@ -7,7 +7,7 @@ from dotenv import load_dotenv #where the bot token is stored
 from unidecode import unidecode #removes accented characters
 from metaphone import doublemetaphone #converts a name into phonetics, allows for fuzzy name searching
 
-host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/itemlist')
+host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/slack_uID_db')
 client = MongoClient(host=f'{host}?retryWrites=false')
 db = client.get_default_database()
 
