@@ -3,7 +3,7 @@ import os, re, requests
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from dotenv import load_dotenv #where the bot token is stored
+#from dotenv import load_dotenv #where the bot token is stored locally, not used over Heroku 'os.environ.get' instead
 from unidecode import unidecode #removes accented characters
 from metaphone import doublemetaphone #converts a name into phonetics, allows for fuzzy name searching
 
@@ -67,8 +67,8 @@ def store_show_item(scanned_name):
         print("ERROR: Name not found")
     else: 
         #http url request to the slack API
-        load_dotenv()
-        token = os.getenv("BOT_USER_OAUTH_ACCESS_TOKEN")
+        #load_dotenv() #not used over heroku
+        token = os.environ.get("BOT_USER_OAUTH_ACCESS_TOKEN")
         channel = '@' + uID[0]
         text = "You've got mail in the 851 California St lobby :love_letter:"\
             
@@ -87,58 +87,6 @@ def store_show_item(scanned_name):
     #item = itemlist.find_one({'_id': ObjectId(scanned_name)})
     #return render_template('store_item.html', itemlist=item, cart=cartlist.count_documents({}) )
     return redirect(url_for('index'))
-
-'''
-@app.route('/store_item/<itemlist_id>/purchase', methods=['GET'])
-def store_purchase(itemlist_id):
-    """Add item to cart and return to index page"""
-    item = itemlist.find_one({'_id': ObjectId(itemlist_id)})
-    cartitem = cartlist.find_one({'item_id': ObjectId(itemlist_id)})
-    #print (cartitem)
-    if cartitem is None:
-        cartitem = {
-            'item_id': item.get('_id'),
-            'title': item.get('title'),
-            'image_sm': item.get('image_sm'),
-            'price': item.get('price'),
-            'quantity':1
-        }
-        cartlist.insert_one(cartitem).inserted_id
-    else:
-        #print (f' quantity before{cartitem["quantity"]} ')
-        cartitem['quantity'] += 1
-        #print (f' quantity after {cartitem["quantity"]} ')
-        cartlist.update_one(
-            #Looking for the item title is possible to avoid the bug with making a new DB. However not a REAL solution
-            {"_id":ObjectId(cartitem["_id"])},
-            {'$set':cartitem}
-        )
-    #√: attempt to find the item in the db, and if true, increase the quantity
-    #√: add the item into our cart DB if false
-    return redirect(url_for('index'))#, itemlist=itemlist.find(), msg="One item added to Cart"))
-
-@app.route('/store_cart')#Note to self, everything is in templates, stop trying to call /templates/
-def cart_view_all():
-    """View all items in users cart"""
-    total = 0
-    for item in cartlist.find():
-        total += int(item['price']) * int(item['quantity'])
-    #terminal test of output
-    #print(f' Total: {total}')
-    return render_template('store_cart.html', itemlist=itemlist, cart=cartlist.count_documents({}), cartlist=cartlist.find(), total = total)
-
-@app.route('/store_cart/<cartitem_id>/delete', methods=['POST'])
-def cart_delete(cartitem_id):
-    """Delete specified item from cart"""
-    cartlist.delete_one({'_id':ObjectId(cartitem_id)})
-    return redirect(url_for('cart_view_all'))
-
-@app.route('/store_cart/purchase')
-def cart_purchase():
-    """Display an exit image, and clear the cart"""
-    cartlist.delete_many({})
-    return render_template('store_purchase.html', cart = 0)
-'''
 
 if app.name == '__main__':
     #app.run(debug=True)
