@@ -1,5 +1,5 @@
 # Snail-Mail-API
-![Logo of the project](https://github.com/Genji-MS/SnailMail-API/blob/master/static/Snail_Mail_icon_Liz.png)
+![Logo of the project](https://github.com/Genji-MS/SnailMail-API/blob/master/static/Snail_Mail_blueicon_Liz.png)
 
 > Scan Letters or Packages and send the recipient a slack message that they have mail for them.
 
