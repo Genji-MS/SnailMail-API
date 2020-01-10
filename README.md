@@ -9,10 +9,15 @@ visit https://ms-snailmail.herokuapp.com
 call the api with url/api/name%20of%20recipient
 
 Returns JSON:{ 
+
     'success' true/false :boolean
+
     'error': null or string (name not found, or other Slack API errors)
+
     'name': users unformatted slack name (not the string passed into the url)
+
     'note': null or string (optional notes to the person scanning the mail, EX. 'moved to rm #101')
+
 }
 
 ### Fuzzy name search notes:
@@ -22,7 +27,10 @@ The API will take the name and remove honorifics, remove accents, sort each name
 ## included scripts and links
 
 Flask https://pypi.org/project/Flask/
+
 Pymongo https://pypi.org/project/pymongo/
+
 Unidecode https://pypi.org/project/Unidecode/
+
 Metaphone https://pypi.org/project/Metaphone/
 
