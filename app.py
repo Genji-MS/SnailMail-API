@@ -77,7 +77,7 @@ def store_show_item(scanned_name):
     r_response = None
     if uID == None:
         print("ERROR: Name not found")
-        r_response = {"success": "false", "error":"name not found", "slackID":"null", "name":"null", "note":"null"}
+        r_response = {"success": False, "error":"name not found", "slackID":None, "name":None, "note":None}
     else: 
         print (f'FOUND: entry {uID}')
         #http url request to the slack API
@@ -91,7 +91,7 @@ def store_show_item(scanned_name):
         r_dictionary= r.json()
         #possible return that message sent successfully through the api
         error = r_dictionary.get('error')
-        r_response = {"success": r_dictionary['ok'], "error": error, "slackID":uID[0], "name":uID[1], "note":"null"}
+        r_response = {"success": r_dictionary['ok'], "error": error, "slackID":uID[0], "name":uID[1], "note":None}
         #print (r_dictionary['ok'])
         #print (r_dictionary) #debug the full api return'''
 
