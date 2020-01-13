@@ -1,6 +1,6 @@
 # app.py
 import os, re, requests
-from flask import Flask, render_template, redirect, url_for, jsonify
+from flask import Flask, render_template, redirect, url_for, jsonify, request
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 #from dotenv import load_dotenv #where the bot token is stored locally, not used over Heroku 'os.environ.get' instead
@@ -25,11 +25,15 @@ def index():
     """Return homepage, AKA wake up Heroku"""
     return render_template('index.html')
 
-@app.route('/api/<scanned_name>', methods=['GET'])
-def store_show_item(scanned_name):
+@app.route('/api/', methods=['GET'])
+def store_show_item():
     """Request the API to find the username and then use the slack API to send the user a message."""
 
-    name = scanned_name
+    name = request.args.get('name')
+    addy = request.args.get('addy')
+
+    #name = scanned_name
+    print (f'name: {name} \naddy: {addy}')
 
     #test name 
     #name = "Mr. Tápia Genji"
@@ -61,7 +65,7 @@ def store_show_item(scanned_name):
     #print (slack_db) #lol
 
     #debug show results
-    print (f'passed in {scanned_name} filtered into {name}')
+    print (f'passed in {request.args.get("name")} filtered into {name}')
     print (f'metaphone tuple: {nameTuple}')
 
     #check various metaphone tuple matches for name in database, return uID or error
@@ -77,20 +81,26 @@ def store_show_item(scanned_name):
     r_response = None
     if uID == None:
         print("ERROR: Name not found")
-        r_response = {"success": False, "error":"name not found", "slackID":None, "name":None, "note":None}
+        #return the original passed in string so errors can be looked for
+        name = request.args.get("name")
+        r_response = {"success": False, "error":"name not found", "slackID":None, "name":name, "note":None}
     else: 
         print (f'FOUND: entry {uID}')
         #http url request to the slack API
         #load_dotenv() #not used over heroku
         token = os.environ.get("BOT_USER_OAUTH_ACCESS_TOKEN")
         channel = '@' + uID[0]
-        text = "You've got mail in the 851 California St lobby :love_letter:"
+        #if addy 
+        if addy != None:
+            text = f"You've got snail mail at {addy} :love_letter:"
+        else:
+            text = "You've got snail mail :love_letter:"
             
         pload = {'token':token,'channel':channel,'text':text}
         r = requests.post('https://slack.com/api/chat.postMessage',data = pload)
         r_dictionary= r.json()
         #possible return that message sent successfully through the api
-        error = r_dictionary.get('error')
+        error = r_dictionary.get('error') 
         r_response = {"success": r_dictionary['ok'], "error": error, "slackID":uID[0], "name":uID[1], "note":None}
         #print (r_dictionary['ok'])
         #print (r_dictionary) #debug the full api return'''
